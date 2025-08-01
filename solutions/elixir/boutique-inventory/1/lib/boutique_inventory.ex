@@ -1,0 +1,28 @@
+defmodule BoutiqueInventory do
+  def sort_by_price(inventory) do
+    Enum.sort(inventory, &(&1.price <= &2.price))
+  end
+
+  def with_missing_price(inventory) do
+    Enum.filter(inventory, &(!&1.price))
+  end
+
+  def update_names(inventory, old_word, new_word) do
+    Enum.map(inventory, &(%{&1 | name: String.replace(&1.name, old_word, new_word)}))
+  end
+
+  def increase_quantity(item, count) do
+    new_counts = 
+      item.quantity_by_size
+      |> Enum.map(fn {key, value} -> {key, value + count} end)
+      |> Map.new()
+    
+    %{item | quantity_by_size: new_counts}
+  end
+
+  def total_quantity(item) do
+    item.quantity_by_size
+    |> Map.values
+    |> Enum.reduce(0, &(&1 + &2))
+  end
+end
